@@ -4,13 +4,13 @@
 #define O " ...................\n"                     // Empty line
 #define G F O O O O O O O O O O O O O O O O O O O F    // Empty board
 int I=441,S=21,E=0,B=1,W=2,M=4,L=8;                    // Square: size, width, empty, black, white, marker, liberties
-char b[]=G;int s,k,m,r,e;int g[360],l[720];            // Board: position, side, ko, move, counters, group, liberties
+char b[]=G;int s=1,k,m,r,e;int g[360],l[720];          // Board: position, side, ko, move, counters, group, liberties
 int n[]={1,-1,21,-21};                                 // Neighbor offsets
 void C(int q, int c) {                                 // COUNT LIBERTIES & STONES IN GROUP (args: square, color)
   int t=b[q]-'`';                                      // Decode stone
   if (b[q]<=' ') return;                               // Stop if hit board edge
   if (t>0&&(t&c)&&!(t&M)) {                            // When hit a stone of a given color, not marked yet
-    b[q]|=M; g[r++]=s;                                 // Mark stone, add stone to group list
+    b[q]|=M; g[r++]=q;                                 // Mark stone, add stone to group list
     for (int i=0;i<4;i++)C(q+n[i],c);                  // Recursively find all stones and liberties in group
   } else if (b[q]=='.') {                              // When hit an empty square
     b[q]=(t+50)|L+'`';l[e++]=q;                        // Mark liberty, add liberty to liberty list
@@ -30,18 +30,17 @@ int P(int q,int c) {                                   // SET STONE (args: squar
   m=q;                                                 // Store move
   if (b[q]!='.'||q==k) return 0;                       // Don't play if square is occupied or ko
   b[q]=c;                                              // Put stone on board
-  if (b[q]&c) {
-    for (int j=0;j<I;j++) {
-      if (b[j]<='.') continue;
-      if (b[j]&c) {
-        C(j,c); printf("j %d, e %d\n", j, e);
-        if(!e) {
-          //if (e==1&& inEye(m)==3-s) k=l[0];
-          for (int i=0;i<r;i++) b[g[i]]='.';               // Remove captured stones
-        } R();
+  k=E;                                                 // Reset ko
+  for (int i=0;i<I;i++) {
+    if (b[i]<='.') continue;
+      if ((b[i]-'`')&(3-(c-'`'))) {
+        C(i,3-(c-'`'));
+        if (!e) {
+          // set ko
+          for (int j=0;j<r;j++) b[g[j]]='.';           // clear block
+        }R();
       }
-    }
-  }s=3-s;
+  } s=3-s;
 }
 
 
@@ -59,7 +58,9 @@ void gtp()
     if (strncmp(u, "version", 7) == 0) printf("= by Code Monkey King\n\n");
     else if (strncmp(u, "protocol_version", 16) == 0) printf("= 1\n\n");
     else if (strncmp(u, "showboard", 9) == 0) printf("= %s\n", b);
-    else if (strncmp(u, "play", 4) == 0) {
+    else if (strncmp(u, "clear_board", 11) == 0) {
+      strcpy(b, G); s=1,k=m=E; printf("=\n\n");
+    } else if (strncmp(u, "play", 4) == 0) {
       int c = u[5]=='B'?'a':'b';
       int x = u[7] - 'A' + 1 - (u[7]>'I'?1:0);
       int y; sscanf(u, "play %*c %*c%d", &y); y=S-1-y;
