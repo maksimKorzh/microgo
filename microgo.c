@@ -35,26 +35,31 @@ int P(int q,int c) {                                   // SET STONE (args: squar
     if(!e) {
       //if (e==1&& inEye(m)==3-s) k=l[0];
       for (int i=0;i<r;i++) b[g[i]]='.';               // Remove captured stones
-    }
-    R();
+    } R();
   }
 }
 
 
 void gtp()
 {
-  #define INPUT_BUFFER 10000
   setbuf(stdin, NULL);
   setbuf(stdout, NULL);
-  char input[INPUT_BUFFER];
+  char u[10000];
   while (1) {
-    memset(input, 0, sizeof(input));
+    memset(u, 0, sizeof(u));
     fflush(stdout);
-    if (!fgets(input, INPUT_BUFFER, stdin)) continue;
-    if (input[0] == '\n') continue;
-    if (strncmp(input, "isready", 7) == 0) printf("readyok\n");
-    else if (strncmp(input, "position", 8) == 0) printf("parsed position\n");
-    else if (strncmp(input, "quit", 4) == 0) break;
+    if (!fgets(u, 10000, stdin)) continue;
+    if (u[0] == '\n') continue;
+    if (strncmp(u, "name", 4) == 0) printf("= Micro Go\n");
+   /* else if (strncmp(u, "protocol_version", 16) == 0) printf("= 1\n");
+    else if (strncmp(u, "showboard", 9) == 0) printf("= %s", b);
+    else if (strncmp(u, "play", 4) == 0) {
+      int c = u[5]=='B'?'a':'b';
+      int x = u[7] - 'A' + 1 - (u[7]>'I'?1:0);
+      int y; sscanf(u, "play %*c %*c%d", &y); y=S-1-y;
+      P(y*S+x,c); printf("=\n");
+    }*/
+    else if (strncmp(u, "quit", 4) == 0) break;
     else printf("=\n");
   }
 }
