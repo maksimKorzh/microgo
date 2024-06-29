@@ -12,7 +12,7 @@ void C(int q, int c) {                                 // COUNT LIBERTIES & STON
   if (t>0&&(t&c)&&!(t&M)) {                            // When hit a stone of a given color, not marked yet
     b[q]|=M; g[r++]=s;                                 // Mark stone, add stone to group list
     for (int i=0;i<4;i++)C(q+n[i],c);                  // Recursively find all stones and liberties in group
-  } else if (t<0) {                                    // When hit an empty square
+  } else if (b[q]=='.') {                              // When hit an empty square
     b[q]=(t+50)|L+'`';l[e++]=q;                        // Mark liberty, add liberty to liberty list
   }
 }
@@ -31,12 +31,17 @@ int P(int q,int c) {                                   // SET STONE (args: squar
   if (b[q]!='.'||q==k) return 0;                       // Don't play if square is occupied or ko
   b[q]=c;                                              // Put stone on board
   if (b[q]&c) {
-    C(q,c);
-    if(!e) {
-      //if (e==1&& inEye(m)==3-s) k=l[0];
-      for (int i=0;i<r;i++) b[g[i]]='.';               // Remove captured stones
-    } R();
-  }
+    for (int j=0;j<I;j++) {
+      if (b[j]<='.') continue;
+      if (b[j]&c) {
+        C(j,c); printf("j %d, e %d\n", j, e);
+        if(!e) {
+          //if (e==1&& inEye(m)==3-s) k=l[0];
+          for (int i=0;i<r;i++) b[g[i]]='.';               // Remove captured stones
+        } R();
+      }
+    }
+  }s=3-s;
 }
 
 
@@ -51,16 +56,17 @@ void gtp()
     if (!fgets(u, 10000, stdin)) continue;
     if (u[0] == '\n') continue;
     if (strncmp(u, "name", 4) == 0) printf("= Micro Go\n");
-   /* else if (strncmp(u, "protocol_version", 16) == 0) printf("= 1\n");
-    else if (strncmp(u, "showboard", 9) == 0) printf("= %s", b);
+    if (strncmp(u, "version", 7) == 0) printf("= by Code Monkey King\n\n");
+    else if (strncmp(u, "protocol_version", 16) == 0) printf("= 1\n\n");
+    else if (strncmp(u, "showboard", 9) == 0) printf("= %s\n", b);
     else if (strncmp(u, "play", 4) == 0) {
       int c = u[5]=='B'?'a':'b';
       int x = u[7] - 'A' + 1 - (u[7]>'I'?1:0);
       int y; sscanf(u, "play %*c %*c%d", &y); y=S-1-y;
-      P(y*S+x,c); printf("=\n");
-    }*/
+      P(y*S+x,c); printf("=\n\n");
+    }
     else if (strncmp(u, "quit", 4) == 0) break;
-    else printf("=\n");
+    else printf("=\n\n");
   }
 }
 
