@@ -1,2 +1,2 @@
 all:
-	gcc -O3 -o nanogo nanogo.c 
+	gcc -O3 -o microgo microgo.c 
