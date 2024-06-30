@@ -1,0 +1,39 @@
+play B J15
+play W J14
+play B K15
+play W K14
+play B L15
+play W L14
+play B M14
+play W L13
+play B M13
+play W L12
+play B M12
+play W K12
+play B L11
+play W J12
+play B K11
+play W H12
+play B J11
+play W G12
+play B H11
+play W G13
+play B G11
+play W G14
+play B H15
+play W H14
+play B G15
+play W E16
+play B J13
+play W C14
+play B F14
+play W D11
+play B F13
+play W F8
+play B F12
+play W K13
+play B K8
+play W H13
+showboard
+
+

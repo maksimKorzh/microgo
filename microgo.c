@@ -1,89 +1,55 @@
-#include <stdio.h>                                     // Standard input/output functions
-#include <string.h>                                    // String manipulation
-#define F "                    \n"                     // Offboard line
-#define O " ...................\n"                     // Empty line
-#define G F O O O O O O O O O O O O O O O O O O O F    // Empty board
-int I=441,S=21,E=0,B=1,W=2,M=4,L=8;                    // Square: size, width, empty, black, white, marker, liberties
-char b[]=G;int s=1,k,m,r,e;int g[360],l[720];          // Board: position, side, ko, move, counters, group, liberties
-int n[]={1,-1,21,-21};                                 // Neighbor offsets
-void C(int q, int c) {                                 // COUNT LIBERTIES & STONES IN GROUP (args: square, color)
-  int t=b[q]-'`';                                      // Decode stone
-  if (b[q]<=' ') return;                               // Stop if hit board edge
-  if (t>0&&(t&c)&&!(t&M)) {                            // When hit a stone of a given color, not marked yet
-    b[q]|=M; g[r++]=q;                                 // Mark stone, add stone to group list
-    for (int i=0;i<4;i++)C(q+n[i],c);                  // Recursively find all stones and liberties in group
-  } else if (b[q]=='.') {                              // When hit an empty square
-    b[q]=(t+50)|L+'`';l[e++]=q;                        // Mark liberty, add liberty to liberty list
-  }
-}
-void R(){                                              // CLEAR MARKERS
-  memset(g, 0, 360*sizeof(int));r=0;                   // Reset group list
-  memset(l, 0, 720*sizeof(int));e=0;                   // Reset liberty list
-  for (int i=0;i<I;i++) {                              // Loop over board squares
-    if (b[i]>'.') {                                    // Skip offboard squares
-      char t = (b[i]-'`')&3;                           // Strip markers
-      t += t?'`':'.'; b[i]=t;                          // Restore board
-    }
-  }
-}
-int P(int q,int c) {                                   // SET STONE (args: square, color)
-  m=q;                                                 // Store move
-  if (b[q]!='.'||q==k) return 0;                       // Don't play if square is occupied or ko
-  b[q]=c;                                              // Put stone on board
-  k=E;                                                 // Reset ko
-  for (int i=0;i<I;i++) {
-    if (b[i]<='.') continue;
-      if ((b[i]-'`')&(3-(c-'`'))) {
-        C(i,3-(c-'`'));
-        if (!e) {
-          // set ko
-          for (int j=0;j<r;j++) b[g[j]]='.';           // clear block
-        }R();
-      }
-  } s=3-s;
-}
+#include <stdio.h>
+#include <string.h>
+#define F "                    \n"
+#define O " ...................\n"
+#define G F O O O O O O O O O O O O O O O O O O O F
+int I=441,S=21,E=0,B=1,W=2,M=4,L=8;char b[]=G;int s=1,k,m,r,e;
+int g[360],l[720],n[]={1,-1,21,-21};
 
+void C(int q, int c){int t=b[q]-'`';if(b[q]<=' ')return; // count
+if(t>0&&(t&c)&&!(t&M)){b[q]|=M;g[r++]=q;for(int i=0;i<4;i++)
+C(q+n[i],c);}else if(b[q]=='.'){b[q]=(t+50)|L+'`';l[e++]=q;}}
 
-void gtp()
-{
-  setbuf(stdin, NULL);
-  setbuf(stdout, NULL);
-  char u[10000];
-  while (1) {
-    memset(u, 0, sizeof(u));
-    fflush(stdout);
-    if (!fgets(u, 10000, stdin)) continue;
-    if (u[0] == '\n') continue;
-    if (strncmp(u, "name", 4) == 0) printf("= Micro Go\n");
-    if (strncmp(u, "version", 7) == 0) printf("= by Code Monkey King\n\n");
-    else if (strncmp(u, "protocol_version", 16) == 0) printf("= 1\n\n");
-    else if (strncmp(u, "showboard", 9) == 0) printf("= %s\n", b);
-    else if (strncmp(u, "clear_board", 11) == 0) {
-      strcpy(b, G); s=1,k=m=E; printf("=\n\n");
-    } else if (strncmp(u, "play", 4) == 0) {
-      int c = u[5]=='B'?'a':'b';
-      int x = u[7] - 'A' + 1 - (u[7]>'I'?1:0);
-      int y; sscanf(u, "play %*c %*c%d", &y); y=S-1-y;
-      P(y*S+x,c); printf("=\n\n");
-    }
-    else if (strncmp(u, "quit", 4) == 0) break;
-    else printf("=\n\n");
-  }
-}
+void R(){memset(g,0,360*sizeof(int));memset(l,0,720*sizeof(int)); // restore
+r=0;e=0;for(int i=0;i<I;i++){if(b[i]>'.'){char t=(b[i]-'`')&3;
+t+=t?'`':'.';b[i]=t;}}}
+
+int Y(int q){int c=-1,o=-1;for(int i=0;i<4;i++){if(b[q+n[i]]<=' ') // in eye
+continue;if(b[q+n[i]]=='.')return 0;if(c==-1){c=(b[q+n[i]]-'`')&3;
+o=3-c;}else if(((b[q+n[i]]-'`')&3)==o)return 0;}return c;}
+
+int P(int q,int c){m=q;if(b[q]!='.'||q==k)return 0;b[q]=c;k=E; // set stone
+for(int i=0;i<I;i++){if(b[i]<='.')continue;if((b[i]-'`')&(3-(c-'`'))){
+C(i,3-(c-'`'));if(!e){if(r==1&&Y(q)==3-s)k=g[0];for(int j=0;j<r;j++)
+b[g[j]]='.';}R();}}s=3-s;}
+
+void D(){setbuf(stdin,NULL);setbuf(stdout,NULL);char u[10000];while(1){ // GTP communication
+memset(u,0,sizeof(u));fflush(stdout);if(!fgets(u,10000,stdin))continue;
+if(u[0]=='\n')continue;if(strncmp(u,"name",4)==0)printf("= Micro Go\n");
+if(strncmp(u,"version",7)==0)printf("= by Code Monkey King\n\n");
+else if(strncmp(u,"protocol_version",16)==0)printf("= 1\n\n");
+else if(strncmp(u,"showboard",9)==0)printf("= %s\n",b);
+else if(strncmp(u,"clear_board",11)==0){strcpy(b,G);s=1,k=m=E;printf("=\n\n");}
+else if(strncmp(u,"play",4)==0){int c=u[5]=='B'?'a':'b';int x=u[7]-'A'+1-(u[7]>'I'?1:0);
+int y;sscanf(u,"play %*c %*c%d",&y);y=S-1-y;P(y*S+x,c);printf("=\n\n");}
+else if(strncmp(u,"quit",4)==0)break;else printf("=\n\n");}}
 
 void debug() {
-  b[1*S+3]=B+'`';
-  b[2*S+3]=B+'`';
-  b[3*S+3]=B+'`';
-  printf("%s", b);
-  C(3*S+3, B);
-  printf("%s", b);
-  //for (int i=0; i < 20; i++) printf("%d %d\n", g[i], l[i]);
-  R();
-  printf("%s", b);
+  P(2*S+4,'a');
+  P(2*S+5,'b');
+  P(3*S+5,'a');
+  P(3*S+4,'b');
+  P(4*S+4,'a');
+  P(4*S+5,'b');
+  P(3*S+3,'a');
+  P(3*S+6,'b');
+  P(16*S+16,'a');
+  P(3*S+4,'b');
+  //P(3*S+5,'a');
+  printf("%s %d\n", b,k);
 }
 
 int main() {
-  gtp();
+  D();
   //debug();
 }
