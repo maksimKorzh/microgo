@@ -49,45 +49,19 @@ C(i,3-(c-'`'));if(!e){if(r==1&&Y(q)==3-s)k=g[0];for(int j=0;j<r;j++)
 b[g[j]]='.';}R();}}C(q,c);int suicide=e?0:1;R();if(suicide){b[q]='.';
 k=_k;return 0;}s=3-s;return 1;}
 
-int evaluate() {
-  int eval=0;
-  int blackStones = 0;
-  int whiteStones = 0;
-  for (int q = 0; q < I; q++) {
-    if(b[q]<=' '||b[q]=='.')continue;
 
-    if (b[q]=='a') blackStones += 1;
-    if (b[q]=='b') whiteStones += 1;
-  } eval += (blackStones - whiteStones);
-  return (s==B) ? eval : -eval;
-}
-
-int search(int depth) { /* Recursively search fighting moves */
-if (!depth) return evaluate();int bestScore = -10000; int u[100];
-memset(u,0,100*sizeof(int));int y=0; for (int q=0;q<I;q++){
+int X(int x){if(!x){int v=0,a=0,w=0;for(int q=0;q<I;q++){
+if(b[q]<=' '||b[q]=='.')continue;if(b[q]=='a')a+=1;if(b[q]=='b')
+w+=1;}v+=(a-w);return(s==B)?v:-v;};int h=-10000;int u[100];
+memset(u,0,100*sizeof(int));int y=0;for(int q=0;q<I;q++){
 if(b[q]<=' '||b[q]=='.')continue;C(q,b[q]);if(e<3){for(int j=0;j<e;j++)
 {int f=0;for(int z=0;z<y;z++)if(u[z]==l[j])f=1;if(!f)u[y++]=l[j];}}R();}
-for (int q=0;q<y;q++){if(u[q]==k)continue;char _b[]=G;strcpy(_b,b);
-int _s=s;int _k=k;if(!P(u[q],s+'`'))continue;int score=-search(depth-1);
-if(score>bestScore){bestScore=score;if(depth==6)m=u[q];}strcpy(b,_b);s=_s;
-k=_k;}return bestScore;}
+for(int q=0;q<y;q++){if(u[q]==k)continue;char _b[]=G;strcpy(_b,b);
+int _s=s;int _k=k;if(!P(u[q],s+'`'))continue;int p=-X(x-1);
+if(p>h){h=p;if(x==6)m=u[q];}strcpy(b,_b);s=_s;
+k=_k;}return h;}
 
-void D(){setbuf(stdin,NULL);setbuf(stdout,NULL);char u[10000];while(1){ // GTP communication
-memset(u,0,sizeof(u));fflush(stdout);if(!fgets(u,10000,stdin))continue;
-if(u[0]=='\n')continue;if(strncmp(u,"name",4)==0)printf("= Micro Go\n");
-if(strncmp(u,"version",7)==0)printf("= by Code Monkey King\n\n");
-else if(strncmp(u,"protocol_version",16)==0)printf("= 1\n\n");
-else if(strncmp(u,"showboard",9)==0)printf("= %s %d\n\n",b,s);
-else if(strncmp(u,"clear_board",11)==0){strcpy(b,G);s=B,k=m=E;printf("=\n\n");}
-else if(strncmp(u,"genmove",7)==0){
-  s=(u[8]=='B')?B:W;
-  m=0;
-  int score = search(6);
-  if (score != -10000) {
-    P(m,s+'`');
-    printf("= %s\n\n", move[m]);
-    //printf("= %d %d\n\n", m,score);
-  } else {
+int T(){
     for (int q=0;q<I;q++){
       if((b[q]-'`')==3-s) {
         for (int i=0;i<4;i++){
@@ -100,13 +74,19 @@ else if(strncmp(u,"genmove",7)==0){
         }
       }
     }
-    if (!m)printf("= pass\n\n");
-    else {
-      printf("= %s\n\n",move[m]);
-      P(m,s+'`');
-    }
-  }
+
 }
+
+void D(){setbuf(stdin,NULL);setbuf(stdout,NULL);char u[10000];while(1){ // GTP communication
+memset(u,0,sizeof(u));fflush(stdout);if(!fgets(u,10000,stdin))continue;
+if(u[0]=='\n')continue;if(strncmp(u,"name",4)==0)printf("= Micro Go\n");
+if(strncmp(u,"version",7)==0)printf("= by Code Monkey King\n\n");
+else if(strncmp(u,"protocol_version",16)==0)printf("= 1\n\n");
+else if(strncmp(u,"showboard",9)==0)printf("= %s %d\n\n",b,s);
+else if(strncmp(u,"clear_board",11)==0){strcpy(b,G);s=B,k=m=E;printf("=\n\n");}
+else if(strncmp(u,"genmove",7)==0){s=(u[8]=='B')?B:W;m=0;int p = X(6);
+if(p!=-10000){P(m,s+'`');printf("= %s\n\n",move[m]);}else{T();if(!m)
+printf("= pass\n\n");else{printf("= %s\n\n",move[m]);P(m,s+'`');}}}
 else if(strncmp(u,"play",4)==0){int c=u[5]=='B'?'a':'b';int x=u[7]-'A'+1-(u[7]>'I'?1:0);
 int y;sscanf(u,"play %*c %*c%d",&y);y=S-1-y;P(y*S+x,c);printf("=\n\n");}
 else if(strncmp(u,"quit",4)==0)break;else printf("=\n\n");}}
@@ -130,8 +110,8 @@ void debug() {
   P(16*S+2,'b');
   P(3*S+5,'a');
   printf("%s %d %d\n", b,k,s);
-  int score = search(1);
-  printf("score %d  bestMove %d\n", score,m);
+  int p = X(1);
+  printf("p %d  bestMove %d\n", p,m);
   printf("%s %d %d\n", b,k,s);
 }
 
