@@ -87,19 +87,15 @@ for (int q=0;q<y;q++){
 
 
   if (!P(u[q],s+'`')) continue;
-
-
   int eval = -search(depth-1);
   if (eval > bestScore) {
     bestScore=eval;
-    m=u[q];
+    if (depth==6)m=u[q];
   }
-
   strcpy(b,_b);
   s=_s;
   k=_k;
 }
-
   return bestScore;
 }
 
@@ -113,7 +109,6 @@ else if(strncmp(u,"clear_board",11)==0){strcpy(b,G);s=B,k=m=E;printf("=\n\n");}
 else if(strncmp(u,"genmove",7)==0){
   s=(u[8]=='B')?B:W;
   m=0;
-  //printf("generating move for side %d\n",s);
   int score = search(6);
   if (score != -10000) {
     P(m,s+'`');
@@ -125,8 +120,8 @@ else if(strncmp(u,"genmove",7)==0){
         for (int i=0;i<4;i++){
           if (b[q+n[i]]=='.') {
             int count = 0;
-            for (int j=0;j<4;j++) if (b[q+n[i]+j]!='.')count++;
-            //if (count>2)m=q+n[i];
+            for (int j=0;j<4;j++) if (b[q+n[i]+n[j]]=='.')count++;
+            if (count>1)m=q+n[i];
             break;
           }
         }
