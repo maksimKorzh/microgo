@@ -29,7 +29,7 @@ char *move[]={
 };
 
 int I=441,S=21,E=0,B=1,W=2,M=4,L=8;char b[]=G;int s=1,k,m,r,e;
-int g[360],l[720],n[]={1,-1,21,-21};
+int g[360],l[720],n[]={-1,-21,21,1};
 
 void C(int q, int c){int t=b[q]-'`';if(b[q]<=' ')return; // count
 if(t>0&&(t&c)&&!(t&M)){b[q]|=M;g[r++]=q;for(int i=0;i<4;i++)
@@ -46,22 +46,11 @@ o=3-c;}else if(((b[q+n[i]]-'`')&3)==o)return 0;}return c;}
 int P(int q,int c){if(b[q]!='.'||q==k)return 0;int _k=k;k=E; b[q]=c;// set stone
 for(int i=0;i<I;i++){if(b[i]<='.')continue;if((b[i]-'`')&(3-(c-'`'))){
 C(i,3-(c-'`'));if(!e){if(r==1&&Y(q)==3-s)k=g[0];for(int j=0;j<r;j++)
-b[g[j]]='.';}R();}}
-
-  C(q,c);
-  int suicide = e ? 0:1;
-  R();
-  if (suicide) {
-    b[q] = '.';
-    k=_k;
-    return 0;
-  } 
-
-s=3-s;return 1;}
-
+b[g[j]]='.';}R();}}C(q,c);int suicide=e?0:1;R();if(suicide){b[q]='.';
+k=_k;return 0;}s=3-s;return 1;}
 
 int evaluate() {
-  int eval = 0;
+  int eval=0;
   int blackStones = 0;
   int whiteStones = 0;
   for (int q = 0; q < I; q++) {
@@ -74,30 +63,14 @@ int evaluate() {
 }
 
 int search(int depth) { /* Recursively search fighting moves */
-if (!depth) return evaluate();
-int bestScore = -10000; int u[100];
+if (!depth) return evaluate();int bestScore = -10000; int u[100];
 memset(u,0,100*sizeof(int));int y=0; for (int q=0;q<I;q++){
 if(b[q]<=' '||b[q]=='.')continue;C(q,b[q]);if(e<3){for(int j=0;j<e;j++)
 {int f=0;for(int z=0;z<y;z++)if(u[z]==l[j])f=1;if(!f)u[y++]=l[j];}}R();}
-for (int q=0;q<y;q++){
-  if (u[q]==k) continue;
-  char _b[]=G;strcpy(_b,b);
-  int _s=s;
-  int _k=k;
-
-
-  if (!P(u[q],s+'`')) continue;
-  int eval = -search(depth-1);
-  if (eval > bestScore) {
-    bestScore=eval;
-    if (depth==6)m=u[q];
-  }
-  strcpy(b,_b);
-  s=_s;
-  k=_k;
-}
-  return bestScore;
-}
+for (int q=0;q<y;q++){if(u[q]==k)continue;char _b[]=G;strcpy(_b,b);
+int _s=s;int _k=k;if(!P(u[q],s+'`'))continue;int score=-search(depth-1);
+if(score>bestScore){bestScore=score;if(depth==6)m=u[q];}strcpy(b,_b);s=_s;
+k=_k;}return bestScore;}
 
 void D(){setbuf(stdin,NULL);setbuf(stdout,NULL);char u[10000];while(1){ // GTP communication
 memset(u,0,sizeof(u));fflush(stdout);if(!fgets(u,10000,stdin))continue;
@@ -127,9 +100,11 @@ else if(strncmp(u,"genmove",7)==0){
         }
       }
     }
-    printf("= %s\n\n",move[m]);
-    P(m,s+'`');
-    //printf("= pass\n\n");
+    if (!m)printf("= pass\n\n");
+    else {
+      printf("= %s\n\n",move[m]);
+      P(m,s+'`');
+    }
   }
 }
 else if(strncmp(u,"play",4)==0){int c=u[5]=='B'?'a':'b';int x=u[7]-'A'+1-(u[7]>'I'?1:0);
