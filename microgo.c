@@ -6,7 +6,7 @@
 int d[]={88,340,352,100,69,129,363,297,311,371,143,77,214,226,94,346,220};        // Opening moves
 int I=441,S=21,E=0,B=1,W=2,M=4,L=8;char b[]=G;
 int s=1,k,m,r,e;int g[360],l[720];int n[]={-1,-21,21,1};
-void C(int q, int c){int t=b[q]-'`';if(b[q]<=' ')return;                          // Count liberties
+void C(int q,int c){int t=b[q]-'`';if(b[q]<=' ')return;                           // Count liberties
 if(t>0&&(t&c)&&!(t&M)){b[q]|=M;g[r++]=q;for(int i=0;i<4;i++)
 C(q+n[i],c);}else if(b[q]=='.'){b[q]=(t+50)|L+'`';l[e++]=q;}}
 void R(){memset(g,0,360*sizeof(int));memset(l,0,720*sizeof(int));                 // Restore board after
@@ -18,18 +18,17 @@ o=3-c;}else if(((b[q+n[i]]-'`')&3)==o)return 0;}return c;}
 int P(int q,int c){if(b[q]!='.'||q==k)return 0;int _k=k;k=E; b[q]=c;              // Put stone on board, handle captures
 for(int i=0;i<I;i++){if(b[i]<='.')continue;if((b[i]-'`')&(3-(c-'`'))){
 C(i,3-(c-'`'));if(!e){if(r==1&&Y(q)==3-s)k=g[0];for(int j=0;j<r;j++)
-b[g[j]]='.';}R();}}C(q,c);int suicide=e?0:1;R();if(suicide){b[q]='.';
+b[g[j]]='.';}R();}}C(q,c-'`');    int suicide=e?0:1;R();if(suicide){b[q]='.';
 k=_k;return 0;}s=3-s;return 1;}
 int X(int x){if(!x){int v=0,a=0,w=0;for(int q=0;q<I;q++){                         // Recursively search fighting moves at depth 6
 if(b[q]<=' '||b[q]=='.')continue;if(b[q]=='a')a+=1;if(b[q]=='b')
 w+=1;}v+=(a-w);return(s==B)?v:-v;};int h=-10000;int u[100];
 memset(u,0,100*sizeof(int));int y=0;for(int q=0;q<I;q++){
-if(b[q]<=' '||b[q]=='.')continue;C(q,b[q]);if(e<3){for(int j=0;j<e;j++)
+if(b[q]<=' '||b[q]=='.')continue;C(q,b[q]-'`');if(e<3){for(int j=0;j<e;j++)
 {int f=0;for(int z=0;z<y;z++)if(u[z]==l[j])f=1;if(!f)u[y++]=l[j];}}R();}
-for(int q=0;q<y;q++){if(u[q]==k)continue;char _b[]=G;strcpy(_b,b);
+for(int q=0;q<(y<6?y:5);q++){if(u[q]==k)continue;char _b[]=G;strcpy(_b,b);
 int _s=s;int _k=k;if(!P(u[q],s+'`'))continue;int p=-X(x-1);
-if(p>h){h=p;if(x==6)m=u[q];}strcpy(b,_b);s=_s;
-k=_k;}return h;}
+if(p>h){h=p;if(x==6) /* best move */ m=u[q];}strcpy(b,_b);s=_s;k=_k;}return h;}
 void T(){for(int q=0;q<17;q++){if(b[d[q]]=='.'&&!(Y(d[q]))){m=d[q];return;}}      // Play away if no forcing moves
 for(int q=0;q<I;q++){if((b[q]-'`')==3-s){for(int i=0;i<4;i++){
 if(b[q+n[i]]=='.'){if(b[q+n[i]*2]<' '||b[q+n[i]*3]<' ')break;
@@ -42,7 +41,7 @@ if(strncmp(u,"version",7)==0)printf("= by Code Monkey King\n\n");
 else if(strncmp(u,"protocol_version",16)==0)printf("= 1\n\n");
 else if(strncmp(u,"showboard",9)==0)printf("= %s %d\n\n",b,s);
 else if(strncmp(u,"clear_board",11)==0){strcpy(b,G);s=B,k=m=E;printf("=\n\n");}
-else if(strncmp(u,"genmove",7)==0){s=(u[8]=='B')?B:W;m=0;int p = X(6); // search depth
+else if(strncmp(u,"genmove",7)==0){s=(u[8]=='B')?B:W;m=0;int p = X(6); /* search depth */
 if(p!=-10000)P(m,s+'`');else{T();if(!m)printf("= pass\n\n");else P(m,s+'`');}
 char c[20];int y=(m/21)-1,x=(m%21)-1;c[0]='A'+x+(x>=8);sprintf(c+1,"%d",19-y);
 c[3]='\0';c[0]='A'+x+(x>=8);printf("= %s\n\n",c);}
