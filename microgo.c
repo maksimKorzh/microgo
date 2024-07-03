@@ -24,11 +24,11 @@ int X(int x){if(!x){int v=0,a=0,w=0;for(int q=0;q<I;q++){                       
 if(b[q]<=' '||b[q]=='.')continue;if(b[q]=='a')a+=1;if(b[q]=='b')
 w+=1;}v+=(a-w);return(s==B)?v:-v;};int h=-10000;int u[100];
 memset(u,0,100*sizeof(int));int y=0;for(int q=0;q<I;q++){
-if(b[q]<=' '||b[q]=='.')continue;C(q,b[q]);if(e<4){for(int j=0;j<e;j++)
+if(b[q]<=' '||b[q]=='.')continue;C(q,b[q]);if(e<3){for(int j=0;j<e;j++)
 {int f=0;for(int z=0;z<y;z++)if(u[z]==l[j])f=1;if(!f)u[y++]=l[j];}}R();}
 for(int q=0;q<y;q++){if(u[q]==k)continue;char _b[]=G;strcpy(_b,b);
 int _s=s;int _k=k;if(!P(u[q],s+'`'))continue;int p=-X(x-1);
-if(p>h){h=p;if(x==4)m=u[q];}strcpy(b,_b);s=_s;
+if(p>h){h=p;if(x==6)m=u[q];}strcpy(b,_b);s=_s;
 k=_k;}return h;}
 void T(){for(int q=0;q<17;q++){if(b[d[q]]=='.'&&!(Y(d[q]))){m=d[q];return;}}      // Play away if no forcing moves
 for(int q=0;q<I;q++){if((b[q]-'`')==3-s){for(int i=0;i<4;i++){
@@ -42,7 +42,7 @@ if(strncmp(u,"version",7)==0)printf("= by Code Monkey King\n\n");
 else if(strncmp(u,"protocol_version",16)==0)printf("= 1\n\n");
 else if(strncmp(u,"showboard",9)==0)printf("= %s %d\n\n",b,s);
 else if(strncmp(u,"clear_board",11)==0){strcpy(b,G);s=B,k=m=E;printf("=\n\n");}
-else if(strncmp(u,"genmove",7)==0){s=(u[8]=='B')?B:W;m=0;int p = X(4); // search depth
+else if(strncmp(u,"genmove",7)==0){s=(u[8]=='B')?B:W;m=0;int p = X(6); // search depth
 if(p!=-10000)P(m,s+'`');else{T();if(!m)printf("= pass\n\n");else P(m,s+'`');}
 char c[20];int y=(m/21)-1,x=(m%21)-1;c[0]='A'+x+(x>=8);sprintf(c+1,"%d",19-y);
 c[3]='\0';c[0]='A'+x+(x>=8);printf("= %s\n\n",c);}
