@@ -9,7 +9,7 @@ This is a very naive approach but it might be fun to play with for
 absolute beginners.
 
 # Related project
-If you want to just to try it out without downloading/compiling/installing
+If you want just to try it out without downloading/compiling/installing
 or learn how it works and find a more readable source code have a look at my
 <a href="https://github.com/maksimKorzh/bmgp/tree/main">Bare minimim Go program in JS</a>.
 Although that's not the exact copy, still you'll get an idea how it works.
