@@ -3,7 +3,8 @@
 #define F "                    \n"
 #define O " ...................\n"
 #define G F O O O O O O O O O O O O O O O O O O O F
-int d[]={88,340,352,100,69,129,363,297,311,371,143,77,214-1,226+1,94-21,346+21,220};        // Opening moves
+int d[]={88,340,352,100,69,129,363,297,311,
+371,143,77,213,227,73,367,215,225,115,325,220};                                   // Opening moves
 int I=441,S=21,E=0,B=1,W=2,M=4,L=8;char b[]=G;
 int s=1,k,m,r,e;int g[360],l[720];int n[]={-1,-21,21,1};
 void C(int q,int c){int t=b[q]-'`';if(b[q]<=' ')return;                           // Count liberties
@@ -27,24 +28,12 @@ memset(u,0,100*sizeof(int));int y=0;for(int q=0;q<I;q++){
 if(b[q]<=' '||b[q]=='.')continue;C(q,b[q]-'`');if(e<3){for(int j=0;j<e;j++)
 {int f=0;for(int z=0;z<y;z++)if(u[z]==l[j])f=1;if(!f)u[y++]=l[j];}}R();}
 for(int q=0;q<(y<7?y:6);q++){if(u[q]==k)continue;char _b[]=G;strcpy(_b,b);
-int _s=s;int _k=k;if(!P(u[q],s+'`'))continue;int p=-X(x-1);
-if(p>h){h=p;if(x==6) /* best move */ m=u[q];}strcpy(b,_b);s=_s;k=_k;}return h;}
-void T(){
-  for(int q=0;q<17;q++){if(b[d[q]]=='.'&&!(Y(d[q]))){m=d[q];return;}}      // Play away if no forcing moves
-  int i=100;
-  for(int q=0;q<I;q++){
-    if((b[q]-'`')==3-s){
-      int a=0;
-      C(q,b[q]-'`');
-      if(e<i){i=e;a=l[0];}
-      else if(e)a=l[0];
-      R();
-      int c=0;for(int j=0;j<4;j++)if(b[a+n[j]]=='.')c++;
-      if(a&&c)m=a;
-    }
-  }
-
-}
+int _s=s;int _k=k;if(!P(u[q],s+'`'))continue;int p=-X(x-1);if(p>h){h=p;
+if(x==6)m=u[q];}strcpy(b,_b);s=_s;k=_k;}return h;}
+void T(int z){for(int q=0;q<21;q++){if(b[d[q]]=='.'&&!(Y(d[q]))){m=d[q];          // Play away if no forcing moves
+return;}}int i=100;for(int q=0;q<I;q++){if((b[q]-'`')==3-s){int a=0;
+C(q,b[q]-'`');if(e<i){i=e;a=l[0];}else if(e)a=l[z?(e-1):0];R();int c=0;
+for(int j=0;j<4;j++)if(b[a+n[j]]=='.')c++;if(a&&c)m=a;}}}
 void D(){setbuf(stdin,NULL);setbuf(stdout,NULL);char u[10000];while(1){           // GTP communication
 memset(u,0,sizeof(u));fflush(stdout);if(!fgets(u,10000,stdin))continue;
 if(u[0]=='\n')continue;if(strncmp(u,"name",4)==0)printf("= Micro Go\n");
@@ -52,14 +41,10 @@ if(strncmp(u,"version",7)==0)printf("= by Code Monkey King\n\n");
 else if(strncmp(u,"protocol_version",16)==0)printf("= 1\n\n");
 else if(strncmp(u,"showboard",9)==0)printf("= %s %d\n\n",b,s);
 else if(strncmp(u,"clear_board",11)==0){strcpy(b,G);s=B,k=m=E;printf("=\n\n");}
-else if(strncmp(u,"genmove",7)==0){s=(u[8]=='B')?B:W;m=0;int p=X(6); /* search depth */
-
-
-if(m) P(m,s+'`');else T();
-  char c[20];int y=(m/21)-1,x=(m%21)-1;c[0]='A'+x+(x>=8);sprintf(c+1,"%d",19-y);
-  c[3]='\0';c[0]='A'+x+(x>=8);
-  if(!m)printf("= pass\n\n");else {P(m,s+'`');printf("= %s\n\n",c);}
-}
+else if(strncmp(u,"genmove",7)==0){s=(u[8]=='B')?B:W;m=0;int p=X(6);
+if(m) P(m,s+'`');else {T(1); if(!m)T(0);}char c[20];int y=(m/21)-1,x=(m%21)-1;
+c[0]='A'+x+(x>=8);sprintf(c+1,"%d",19-y);c[3]='\0';c[0]='A'+x+(x>=8);
+if(!m)printf("= pass\n\n");else {P(m,s+'`');printf("= %s\n\n",c);}}
 else if(strncmp(u,"play",4)==0){int c=u[5]=='B'?'a':'b';int x=u[7]-'A'+1-(u[7]>'I'?1:0);
 int y;sscanf(u,"play %*c %*c%d",&y);y=S-1-y;P(y*S+x,c);printf("=\n\n");}
 else if(strncmp(u,"quit",4)==0)break;else printf("=\n\n");}}int main(){D();}
