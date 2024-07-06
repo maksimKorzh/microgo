@@ -12,6 +12,7 @@ absolute beginners.
 It's slightly stronger than GnuGo1.2, the initial public
 release of GnuGo. GnuGo1.2 was meant to be somewhere around
 30kyu so MicroGo is about 30kyu as well.
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/W0VRQ-HEXJ4/0.jpg)](https://www.youtube.com/watch?v=W0VRQ-HEXJ4)
 
 # Related project
 If you want just to try it out without downloading/compiling/installing
