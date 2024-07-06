@@ -33,13 +33,13 @@ if(x==6)m=u[q];}strcpy(b,_b);s=_s;k=_k;}return h;}
 void T(int z){for(int q=0;q<21;q++){if(b[d[q]]=='.'&&!(Y(d[q]))){m=d[q];          // Play away if no forcing moves
 return;}}int i=100;for(int q=0;q<I;q++){if((b[q]-'`')==3-s){int a=0;
 C(q,b[q]-'`');if(e<i){i=e;a=l[0];}else if(e)a=l[z?(e-1):0];R();int c=0;
-for(int j=0;j<4;j++)if(b[a+n[j]]=='.')c++;if(a&&c)m=a;}}}
+for(int j=0;j<4;j++)if(b[a+n[j]]=='.')c++;if(a&&c&&a!=k)m=a;}}}
 void D(){setbuf(stdin,NULL);setbuf(stdout,NULL);char u[10000];while(1){           // GTP communication
 memset(u,0,sizeof(u));fflush(stdout);if(!fgets(u,10000,stdin))continue;
 if(u[0]=='\n')continue;if(strncmp(u,"name",4)==0)printf("= Micro Go\n");
 if(strncmp(u,"version",7)==0)printf("= by Code Monkey King\n\n");
 else if(strncmp(u,"protocol_version",16)==0)printf("= 1\n\n");
-else if(strncmp(u,"showboard",9)==0)printf("= %s %d\n\n",b,s);
+else if(strncmp(u,"showboard",9)==0)printf("= %s %d %d\n\n",b,s,k);
 else if(strncmp(u,"clear_board",11)==0){strcpy(b,G);s=B,k=m=E;printf("=\n\n");}
 else if(strncmp(u,"genmove",7)==0){s=(u[8]=='B')?B:W;m=0;int p=X(6);
 if(m)P(m,s+'`');else{T(1);if(!m)T(0);}char c[20];int y=(m/21)-1,x=(m%21)-1;
