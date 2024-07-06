@@ -8,6 +8,11 @@ The latter is an attempt to surround opponents groups one by one.
 This is a very naive approach but it might be fun to play with for
 absolute beginners.
 
+# How strong is it?
+It's slightly stronger than GnuGo1.2, the initial public
+release of GnuGo. GnuGo1.2 was meant to be somewhere around
+30kyu so MicroGo is about 30kyu as well.
+
 # Related project
 If you want just to try it out without downloading/compiling/installing
 or learn how it works and find a more readable source code have a look at my
