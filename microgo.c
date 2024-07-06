@@ -42,7 +42,7 @@ else if(strncmp(u,"protocol_version",16)==0)printf("= 1\n\n");
 else if(strncmp(u,"showboard",9)==0)printf("= %s %d\n\n",b,s);
 else if(strncmp(u,"clear_board",11)==0){strcpy(b,G);s=B,k=m=E;printf("=\n\n");}
 else if(strncmp(u,"genmove",7)==0){s=(u[8]=='B')?B:W;m=0;int p=X(6);
-if(m) P(m,s+'`');else {T(1); if(!m)T(0);}char c[20];int y=(m/21)-1,x=(m%21)-1;
+if(m)P(m,s+'`');else{T(1);if(!m)T(0);}char c[20];int y=(m/21)-1,x=(m%21)-1;
 c[0]='A'+x+(x>=8);sprintf(c+1,"%d",19-y);c[3]='\0';c[0]='A'+x+(x>=8);
 if(!m)printf("= pass\n\n");else {P(m,s+'`');printf("= %s\n\n",c);}}
 else if(strncmp(u,"play",4)==0){int c=u[5]=='B'?'a':'b';int x=u[7]-'A'+1-(u[7]>'I'?1:0);
